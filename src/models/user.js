@@ -13,13 +13,38 @@ const { isEmail } = validator
 
 // Create a schema.
 const schema = new mongoose.Schema({
+  firstName: {
+    type: String,
+    required: [true, 'First name is required.'],
+    minLength: [1, 'The first name must be of minimum length 1 characters.'],
+    maxLength: [256, 'The first name must be of maximum length 256 characters.'],
+    trim: true
+  },
+  lastName: {
+    type: String,
+    required: [true, 'Last name is required.'],
+    minLength: [1, 'The last name must be of minimum length 1 characters.'],
+    maxLength: [256, 'The last name must be of maximum length 256 characters.'],
+    trim: true
+  },
   email: {
     type: String,
     required: [true, 'Email address is required.'],
     unique: true,
     lowercase: true,
     trim: true,
-    validate: [isEmail, 'Please provide a valid email address.']
+    validate: [isEmail, 'Please provide a valid email address.'],
+    maxLength: [254, 'The email must be of maximum length 254 characters.']
+  },
+  username: {
+    type: String,
+    required: [true, 'Username is required.'],
+    unique: true,
+    // - A valid username should start with an alphabet so, [A-Za-z].
+    // - All other characters can be alphabets, numbers or an underscore so, [A-Za-z0-9_-].
+    // - Since length constraint is 3-256 and we had already fixed the first character, so we give {2, 255}.
+    // - We use ^ and $ to specify the beginning and end of matching.
+    match: [/^[A-Za-z][A-Za-z0-9_-]{2,255}$/, 'Please provide a valid username.']
   },
   password: {
     type: String,
@@ -31,12 +56,12 @@ const schema = new mongoose.Schema({
 }, {
   timestamps: true,
   toJSON: {
-  /**
-   * Performs a transformation of the resulting object to remove sensitive information.
-   *
-   * @param {object} doc - The mongoose document which is being converted.
-   * @param {object} ret - The plain object representation which has been converted.
-   */
+    /**
+     * Performs a transformation of the resulting object to remove sensitive information.
+     *
+     * @param {object} doc - The mongoose document which is being converted.
+     * @param {object} ret - The plain object representation which has been converted.
+     */
     transform: function (doc, ret) {
       delete ret._id
       delete ret.__v
