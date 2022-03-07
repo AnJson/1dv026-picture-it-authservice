@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "The auth service is responsible for handling accounts and handing out JWTs upon successful authentication.",
   "main": "src/server.js",
+  "type": "module",
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon --inspect -r dotenv/config src/server.js",
