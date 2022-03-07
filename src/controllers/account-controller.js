@@ -45,8 +45,9 @@ export class AccountController {
       // -----------------------------------------------------------------
       // const refreshToken = ...
 
+      // Authentication successful.
       res
-        .status(201)
+        .status(200)
         .json({
           access_token: accessToken
           // refresh_token: refreshToken
@@ -80,9 +81,10 @@ export class AccountController {
 
       await user.save()
 
+      // User successfully registered.
       res
-        .status(201)
-        .json({ id: user.id })
+        .status(204)
+        .json()
     } catch (error) {
       let err = error
 
