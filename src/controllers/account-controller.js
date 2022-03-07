@@ -34,7 +34,7 @@ export class AccountController {
 
       // Create the access token with the shorter lifespan.
       const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
-        algorithm: 'HS256',
+        algorithm: 'RS256',
         expiresIn: process.env.ACCESS_TOKEN_LIFE
       })
 
