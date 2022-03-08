@@ -23,18 +23,15 @@ export class AccountController {
   async login (req, res, next) {
     try {
       const user = await User.authenticate(req.body.username, req.body.password)
+      const formattedUser = user.toJSON()
 
       const payload = {
-        iss: user.id,
-        sub: user.username,
-        given_name: user.firstName,
-        family_name: user.lastName,
-        email: user.email,
-        x_permission_level: user.permissionLevel
+        sub: formattedUser.id,
+        x_permission_level: formattedUser.permissionLevel
       }
 
       // Create the access token with the shorter lifespan.
-      const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+      const accessToken = jwt.sign(payload, Buffer.from(process.env.ACCESS_TOKEN_SECRET, 'base64'), {
         algorithm: 'RS256',
         expiresIn: process.env.ACCESS_TOKEN_LIFE
       })
@@ -46,10 +43,14 @@ export class AccountController {
           access_token: accessToken
         })
     } catch (error) {
-      // Authentication failed.
-      const err = createError(401)
-      err.cause = error
+      // Authentication failed or server-error.
+      const err = error
 
+      if (err.status !== 401) {
+        err.message = 'An unexpected condition was encountered.'
+      }
+
+      err.cause = error
       next(err)
     }
   }

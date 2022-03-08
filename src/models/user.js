@@ -6,6 +6,7 @@
  */
 
 import bcrypt from 'bcrypt'
+import createError from 'http-errors'
 import mongoose from 'mongoose'
 import validator from 'validator'
 
@@ -86,16 +87,16 @@ schema.pre('save', async function (next) {
 /**
  * Authenticates a user.
  *
- * @param {string} email - Users email.
+ * @param {string} username - Users username.
  * @param {string} password - Users password.
  * @returns {Promise<User>} - Promise for the user-object from db.
  */
-schema.statics.authenticate = async function (email, password) {
-  const user = await this.findOne({ email })
+schema.statics.authenticate = async function (username, password) {
+  const user = await this.findOne({ username })
 
   // If no user found or password is wrong, throw an error.
   if (!user || !(await bcrypt.compare(password, user.password))) {
-    throw new Error('Invalid credentials.')
+    throw createError(401, 'Credentials invalid or not provided.')
   }
 
   // User found and password correct, return the user.
