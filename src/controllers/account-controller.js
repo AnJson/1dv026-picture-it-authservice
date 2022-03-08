@@ -46,10 +46,6 @@ export class AccountController {
       // Authentication failed or server-error.
       const err = error
 
-      if (err.status !== 401) {
-        err.message = 'An unexpected condition was encountered.'
-      }
-
       err.cause = error
       next(err)
     }

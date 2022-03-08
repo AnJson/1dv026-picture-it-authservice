@@ -31,6 +31,7 @@ try {
   // Error handler.
   app.use(function (err, req, res, next) {
     err.status = err.status || 500
+    err.message = err.status === 500 ? 'An unexpected condition was encountered.' : err.message
 
     if (req.app.get('env') !== 'development') {
       return res
