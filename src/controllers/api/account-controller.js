@@ -7,7 +7,7 @@
 
 import jwt from 'jsonwebtoken'
 import createError from 'http-errors'
-import { User } from '../models/user.js'
+import { User } from '../../models/user.js'
 
 /**
  * Encapsulates a controller.
