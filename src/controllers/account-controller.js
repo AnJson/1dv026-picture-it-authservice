@@ -25,6 +25,7 @@ export class AccountController {
       const user = await User.authenticate(req.body.username, req.body.password)
 
       const payload = {
+        iss: user.id,
         sub: user.username,
         given_name: user.firstName,
         family_name: user.lastName,
@@ -38,19 +39,11 @@ export class AccountController {
         expiresIn: process.env.ACCESS_TOKEN_LIFE
       })
 
-      // // Create the refresh token with the longer lifespan.
-      // -----------------------------------------------------------------
-      // 👉👉👉 This is the place to create and handle the refresh token!
-      //         Quite a lot of additional implementation is required!!!
-      // -----------------------------------------------------------------
-      // const refreshToken = ...
-
       // Authentication successful.
       res
         .status(200)
         .json({
           access_token: accessToken
-          // refresh_token: refreshToken
         })
     } catch (error) {
       // Authentication failed.
@@ -83,8 +76,8 @@ export class AccountController {
 
       // User successfully registered.
       res
-        .status(204)
-        .json()
+        .status(201)
+        .json({ id: user.id })
     } catch (error) {
       let err = error
 
