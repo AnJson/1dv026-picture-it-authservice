@@ -31,7 +31,16 @@ try {
   // Error handler.
   app.use(function (err, req, res, next) {
     err.status = err.status || 500
-    err.message = err.status === 500 ? 'An unexpected condition was encountered.' : err.message
+
+    if (err.status === 400) {
+      err.message = 'The request cannot or will not be processed due to something that is perceived to be a client error (for example, validation error).'
+    } else if (err.status === 401) {
+      err.message = 'Credentials invalid or not provided.'
+    } else if (err.status === 409) {
+      err.message = 'The username and/or email address is already registered.'
+    } else if (err.status === 500) {
+      err.message = 'An unexpected condition was encountered.'
+    }
 
     if (req.app.get('env') !== 'development') {
       return res
