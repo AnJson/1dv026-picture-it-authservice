@@ -13,6 +13,19 @@ import { User } from '../models/user.js'
  * Encapsulates a controller.
  */
 export class AccountController {
+  // TODO: This is just for testing!!!!!!!!!!!
+  async users (req, res, next) {
+    try {
+      const users = await User.find()
+
+      // Authentication successful.
+      res
+        .status(200)
+        .json(users)
+    } catch (error) {
+      next(error)
+    }
+  }
   /**
    * Authenticates a user.
    *

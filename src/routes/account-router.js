@@ -14,6 +14,10 @@ const controller = new AccountController()
 
 // Map HTTP verbs and route paths to controller actions.
 
+// TODO: This is just for testing!!!!!!!!!!!
+// Get all users
+router.get('/users', (req, res, next) => controller.users(req, res, next))
+
 // Log in
 router.post('/login', (req, res, next) => controller.login(req, res, next))
 

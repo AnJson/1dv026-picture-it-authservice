@@ -9,6 +9,9 @@ import bcrypt from 'bcrypt'
 import createError from 'http-errors'
 import mongoose from 'mongoose'
 import validator from 'validator'
+import { Cryptography } from '../../utils/Cryptography.js'
+
+const cryptography = new Cryptography(process.env.CRYPTO_ALGORITHM, process.env.CRYPTO_SECURITY_KEY, process.env.CRYPTO_INIT_VECTOR)
 
 const { isEmail } = validator
 
@@ -19,14 +22,42 @@ const schema = new mongoose.Schema({
     required: [true, 'First name is required.'],
     minLength: [1, 'The first name must be of minimum length 1 characters.'],
     maxLength: [256, 'The first name must be of maximum length 256 characters.'],
-    trim: true
+    trim: true,
+    /**
+     * Encrypt field on set.
+     *
+     * @param {string} value - The value to encrypt for db.
+     * @returns {string} - Encrypted value.
+     */
+    set: value => cryptography.encrypt(value),
+    /**
+     * Decrypt field on get.
+     *
+     * @param {string} value - The value from db to decrypt.
+     * @returns {string} - Decrypted value.
+     */
+    get: value => cryptography.decrypt(value)
   },
   lastname: {
     type: String,
     required: [true, 'Last name is required.'],
     minLength: [1, 'The last name must be of minimum length 1 characters.'],
     maxLength: [256, 'The last name must be of maximum length 256 characters.'],
-    trim: true
+    trim: true,
+    /**
+     * Encrypt field on set.
+     *
+     * @param {string} value - The value to encrypt for db.
+     * @returns {string} - Encrypted value.
+     */
+    set: value => cryptography.encrypt(value),
+    /**
+     * Decrypt field on get.
+     *
+     * @param {string} value - The value from db to decrypt.
+     * @returns {string} - Decrypted value.
+     */
+    get: value => cryptography.decrypt(value)
   },
   email: {
     type: String,
@@ -57,6 +88,7 @@ const schema = new mongoose.Schema({
 }, {
   timestamps: true,
   toJSON: {
+    getters: true,
     /**
      * Performs a transformation of the resulting object to remove sensitive information.
      *
