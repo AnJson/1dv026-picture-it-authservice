@@ -10,6 +10,7 @@ import helmet from 'helmet'
 import logger from 'morgan'
 import { router } from './routes/router.js'
 import { connectDB } from './config/mongoose.js'
+import { rateLimiter } from './config/rate-limit.js'
 
 try {
   await connectDB()
@@ -24,6 +25,9 @@ try {
 
   // Parse requests of the content type application/json.
   app.use(express.json())
+
+  // Apply the rate limiting middleware on requests to the login endpoint.
+  app.use('/login', rateLimiter)
 
   // Register routes.
   app.use('/', router)
