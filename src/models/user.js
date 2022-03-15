@@ -65,8 +65,33 @@ const schema = new mongoose.Schema({
     unique: true,
     lowercase: true,
     trim: true,
-    validate: [isEmail, 'Please provide a valid email address.'],
-    maxLength: [254, 'The email must be of maximum length 254 characters.']
+    validate: {
+      /**
+       * Validate the email as a valid email.
+       *
+       * @param {string} enteredEmail - The email entered and sent in the request.
+       * @returns {boolean} - Is email valid.
+       */
+      validator: function (enteredEmail) {
+        return isEmail(cryptography.decrypt(enteredEmail))
+      },
+      message: 'Please provide a valid email address.'
+    },
+    maxLength: [254, 'The email must be of maximum length 254 characters.'],
+    /**
+     * Encrypt field on set.
+     *
+     * @param {string} value - The value to encrypt for db.
+     * @returns {string} - Encrypted value.
+     */
+    set: value => cryptography.encrypt(value),
+    /**
+     * Decrypt field on get.
+     *
+     * @param {string} value - The value from db to decrypt.
+     * @returns {string} - Decrypted value.
+     */
+    get: value => cryptography.decrypt(value)
   },
   username: {
     type: String,
